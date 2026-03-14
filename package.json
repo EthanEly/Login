@@ -1,0 +1,14 @@
+{
+  "name": "login",
+  "version": "1.0.0",
+  "description": "Welcome to the Login repository.",
+  "scripts": {
+    "dev": "npm run dev --prefix user-details-manager/app",
+    "build": "npm run build --prefix user-details-manager/app",
+    "start": "npm run start --prefix user-details-manager/app",
+    "test": "npm run test --prefix user-details-manager/app",
+    "install:app": "npm install --prefix user-details-manager/app"
+  },
+  "author": "Ethan Ely",
+  "license": "MIT"
+}
