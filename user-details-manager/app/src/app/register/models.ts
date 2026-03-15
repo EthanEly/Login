@@ -12,8 +12,3 @@ export interface UserRegistrationInformation {
   email: string;
   password: string;
 }
-
-export interface ValidationError {
-  field: string;
-  message: string;
-}

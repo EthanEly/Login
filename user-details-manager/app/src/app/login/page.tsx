@@ -1,38 +1,28 @@
 "use client";
 import { useState } from "react";
-import { UserFormData, UserRegistrationInformation } from "./models";
 import TextInput from "../../components/textInput";
+import { UserLoginFormData, UserLoginInformation } from "./models";
 import { ValidationError } from "../../../src/common/models";
 
 enum TextInputField {
-  FirstName = "first-name",
-  LastName = "last-name",
   Email = "email-address",
   Password = "password",
-  ConfirmPassword = "confirm-password",
 }
 
-export default function Register() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
   const [errors, setErrors] = useState<ValidationError[]>([]);
 
-  const handleSubmit = async () => {
+  const handleLogin = async () => {
     const validationErrors = validateFormData({
-      firstName,
-      lastName,
       email,
       password,
-      confirmPassword,
     });
     setErrors(validationErrors);
 
     if (validationErrors.length === 0) {
-      await registerUser({ firstName, lastName, email, password });
+      await loginUser({ email, password });
     }
   };
 
@@ -41,26 +31,10 @@ export default function Register() {
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
         <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
           <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Hello!
+            Welcome back!
           </h1>
           <div className="max-w-md text-2xl text-zinc-600 dark:text-zinc-400">
-            <p className="max-w-md py-2 leading-8">First time? Let&apos;s get you registered!</p>
-            <TextInput
-              field={TextInputField.FirstName}
-              name="First name"
-              type="text"
-              value={firstName}
-              onChange={setFirstName}
-              errors={errors}
-            />
-            <TextInput
-              field={TextInputField.LastName}
-              name="Last name"
-              type="text"
-              value={lastName}
-              onChange={setLastName}
-              errors={errors}
-            />
+            <p className="max-w-md py-2 leading-8">Let&apos;s get you logged in.</p>
             <TextInput
               field={TextInputField.Email}
               name="Email address"
@@ -77,21 +51,13 @@ export default function Register() {
               onChange={setPassword}
               errors={errors}
             />
-            <TextInput
-              field={TextInputField.ConfirmPassword}
-              name="Confirm password"
-              type="password"
-              value={confirmPassword}
-              onChange={setConfirmPassword}
-              errors={errors}
-            />
           </div>
           <div className="flex flex-col text-base font-medium sm:flex-row">
             <button
-              onClick={handleSubmit}
+              onClick={handleLogin}
               className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
             >
-              Submit
+              Login
             </button>
           </div>
         </div>
@@ -100,18 +66,10 @@ export default function Register() {
   );
 }
 
-export function validateFormData(userData: UserFormData): ValidationError[] {
-  const { firstName, lastName, email, password, confirmPassword } = userData;
+export function validateFormData(userData: UserLoginFormData): ValidationError[] {
+  const { email, password } = userData;
 
   const errors: ValidationError[] = [];
-
-  if (firstName.trim() === "") {
-    errors.push({ field: TextInputField.FirstName, message: "First name is required" });
-  }
-
-  if (lastName.trim() === "") {
-    errors.push({ field: TextInputField.LastName, message: "Last name is required" });
-  }
 
   if (email.trim() === "") {
     errors.push({ field: TextInputField.Email, message: "Email address is required" });
@@ -123,20 +81,12 @@ export function validateFormData(userData: UserFormData): ValidationError[] {
     errors.push({ field: TextInputField.Password, message: "Password is required" });
   }
 
-  if (confirmPassword.trim() === "") {
-    errors.push({ field: TextInputField.ConfirmPassword, message: "Confirm password is required" });
-  }
-
-  if (password !== confirmPassword) {
-    errors.push({ field: TextInputField.ConfirmPassword, message: "Passwords do not match" });
-  }
-
   return errors;
 }
 
-export async function registerUser(userData: UserRegistrationInformation) {
+export async function loginUser(userData: UserLoginInformation) {
   try {
-    const response = await fetch("http://localhost:5254/register", {
+    const response = await fetch("http://localhost:5254/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

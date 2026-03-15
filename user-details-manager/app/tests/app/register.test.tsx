@@ -4,7 +4,7 @@ import Register, { registerUser, validateFormData } from "../../src/app/register
 import * as TextInputMock from "../../src/components/textInput";
 import { UserFormData, UserRegistrationInformation } from "@/src/app/register/models";
 
-describe("Landing Page", () => {
+describe("Register Page", () => {
   it("should render the page heading", () => {
     render(<Register />);
 
@@ -194,7 +194,7 @@ describe("Landing Page", () => {
 
       await registerUser(userData);
 
-      expect((global as any).fetch).toHaveBeenCalledWith("/api/register", {
+      expect((global as any).fetch).toHaveBeenCalledWith("http://localhost:5254/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
