@@ -1,0 +1,23 @@
+@UserDetailsManagerApi_HostAddress = http://localhost:8080
+
+### Register a new user
+POST {{UserDetailsManagerApi_HostAddress}}/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "firstName": "Test",
+  "lastName": "User",
+  "password": "password123"
+}
+
+###
+
+### Login with existing user
+POST {{UserDetailsManagerApi_HostAddress}}/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
