@@ -11,27 +11,29 @@ describe("TextInput component", () => {
     errors: [],
   };
 
-  it("renders field name provided", () => {
+  it("should render field name as label for input", () => {
     const props = { ...defaultProps, name: "My New Field" };
 
     render(<TextInput {...props} />);
 
-    const name = screen.getByText("My New Field");
+    const name = screen.getByLabelText("My New Field");
+    const textBox = screen.getByRole("textbox", { name: "My New Field" });
 
     expect(name).toBeVisible();
+    expect(textBox).toBeVisible();
   });
 
-  it("renders value provided", () => {
+  it("should render value provided", () => {
     const props = { ...defaultProps, value: "A test value" };
 
     render(<TextInput {...props} />);
 
-    const textBox = screen.getByLabelText("My New Field");
+    const textBox = screen.getByLabelText(defaultProps.name);
 
     expect(textBox.getAttribute("value")).toBe("A test value");
   });
 
-  it("renders placeholder text provided", () => {
+  it("should render placeholder text provided", () => {
     const props = { ...defaultProps, placeHolder: "A test placeholder" };
 
     render(<TextInput {...props} />);
@@ -41,7 +43,7 @@ describe("TextInput component", () => {
     expect(textBox.getAttribute("placeholder")).toBe("A test placeholder");
   });
 
-  it("sets password type on input", () => {
+  it("should set provided type on input", () => {
     const props = { ...defaultProps, type: "password" };
 
     render(<TextInput {...props} />);
@@ -51,7 +53,7 @@ describe("TextInput component", () => {
     expect(textBox.getAttribute("type")).toBe("password");
   });
 
-  it("sets type on input to text if no type provided", () => {
+  it("should set type on input to text if no type provided", () => {
     render(<TextInput {...defaultProps} />);
 
     const textBox = screen.getByLabelText(defaultProps.name);
@@ -59,7 +61,7 @@ describe("TextInput component", () => {
     expect(textBox.getAttribute("type")).toBe("text");
   });
 
-  it("renders an error message, if error for field exists", () => {
+  it("should render an error message, if error for field exists", () => {
     const props = {
       ...defaultProps,
       errors: [{ field: "test-field", message: "Test error message" }],
@@ -72,7 +74,7 @@ describe("TextInput component", () => {
     expect(errorMessage).toBeVisible();
   });
 
-  it("does not render an error message, if no error for field exists", () => {
+  it("should not render an error message, if no error for field exists", () => {
     const props = {
       ...defaultProps,
       errors: [{ field: "another-field-name", message: "Test error message" }],
