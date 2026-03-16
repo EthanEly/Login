@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using User.Interfaces.Respositories;
 using User.Interfaces.Services;
 using User.Respositories.DatabaseContext;
-using User.Respositories.UserRepository;
+using User.Respositories;
 using User.Services;
 
 var builder = WebApplication.CreateBuilder(args);

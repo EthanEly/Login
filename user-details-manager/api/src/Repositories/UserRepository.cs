@@ -3,7 +3,7 @@ using User.Respositories.DatabaseContext;
 using User.Interfaces.Respositories;
 using User.Models.UserEntity;
 
-namespace User.Respositories.UserRepository;
+namespace User.Respositories;
 
 public class UserRepository : IUserRepository
 {
