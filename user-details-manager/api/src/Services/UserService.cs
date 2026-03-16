@@ -4,7 +4,7 @@ using User.Models.UserRegistration;
 using User.Models.UserLogin;
 using User.Models.UserEntity;
 
-namespace User.Services.UserService;
+namespace User.Services;
 
 public class UserService : IUserService
 {

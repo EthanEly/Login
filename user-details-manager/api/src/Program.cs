@@ -1,53 +1,47 @@
 using Microsoft.EntityFrameworkCore;
-using User.Interfaces.Services;
 using User.Interfaces.Respositories;
+using User.Interfaces.Services;
 using User.Respositories.DatabaseContext;
-using User.Services.UserService;
 using User.Respositories.UserRepository;
-using User.Models.UserRegistration;
-using User.Models.UserLogin;
-
+using User.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (string.IsNullOrEmpty(connectionString))
+const string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
 {
-    throw new InvalidOperationException("The connection string 'DefaultConnection' was not found in the configuration.");
-}
-builder.Services.AddDbContext<UserDbContext>(options => options.UseNpgsql(connectionString));
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
-builder.Services.AddOpenApi();
+builder.Services.AddControllers();
 
-builder.Services.AddScoped<IUserService, UserService>();
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<UserDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
+
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
-
-app.MapPost("/register", async (IUserService userService, UserRegistration registration) =>
-{
-    try
-    {
-        await userService.Register(registration);
-        return Results.Ok("User registered successfully");
-    }
-    catch (InvalidOperationException ex)
-    {
-        return Results.Conflict(ex.Message);
-    }
-});
-
-app.MapPost("/login", async (IUserService userService, UserLogin login) =>
-{
-    var isLoggedIn = await userService.Login(login);
-    return isLoggedIn ? Results.Ok("Login successful") : Results.Unauthorized();
-});
+app.UseCors(MyAllowSpecificOrigins);
+app.UseAuthorization();
+app.MapControllers();
 
 app.Run();

@@ -3,7 +3,7 @@ using User.Interfaces.Respositories;
 using User.Models.UserEntity;
 using User.Models.UserLogin;
 using User.Models.UserRegistration;
-using User.Services.UserService;
+using User.Services;
 using Xunit;
 
 namespace User.Tests.Services;
