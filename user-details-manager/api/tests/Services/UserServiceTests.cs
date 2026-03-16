@@ -62,7 +62,7 @@ public class UserServiceTests
       Email = registration.Email,
       FirstName = "Test",
       LastName = "User",
-      PasswordHash = "some_hash"
+      PasswordHash = "GENERATED_HASH"
     };
 
     _userRepositoryMock.Setup(repo => repo.GetUserByEmail(registration.Email)).ReturnsAsync(existingUser);
@@ -118,7 +118,7 @@ public class UserServiceTests
     var user = new UserEntity
     {
       Email = login.Email,
-      PasswordHash = BCrypt.Net.BCrypt.HashPassword("wrongpassword"),
+      PasswordHash = BCrypt.Net.BCrypt.HashPassword("WRONG_PASSWORD"),
       FirstName = "Test",
       LastName = "User"
     };
@@ -130,5 +130,44 @@ public class UserServiceTests
 
     // Assert
     Assert.False(result);
+  }
+
+  [Fact]
+  public async Task GetUserByEmail_ShouldReturnUser_WhenUserExists()
+  {
+    // Arrange
+    var email = "test@example.com";
+    var expectedUser = new UserEntity
+    {
+      Email = "test@example.com",
+      FirstName = "Test",
+      LastName = "User",
+      PasswordHash = "GENERATED_HASH"
+    };
+
+    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(email)).ReturnsAsync(expectedUser);
+
+    // Act
+    var result = await _userService.GetUserByEmail(email);
+
+    // Assert
+    Assert.NotNull(result);
+    Assert.Equal(expectedUser.FirstName, result.FirstName);
+    Assert.Equal(expectedUser.LastName, result.LastName);
+    Assert.Equal(expectedUser.PasswordHash, result.PasswordHash);
+  }
+
+  [Fact]
+  public async Task GetUserByEmail_ShouldReturnNull_WhenUserDoesNotExist()
+  {
+    // Arrange
+    var email = "test@example.com";
+    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(email)).ReturnsAsync((UserEntity?)null);
+
+    // Act
+    var result = await _userService.GetUserByEmail(email);
+
+    // Assert
+    Assert.Null(result);
   }
 }

@@ -46,4 +46,9 @@ public class UserService : IUserService
 
     return true;
   }
+
+  public async Task<UserEntity?> GetUserByEmail(string email)
+  {
+    return await _userRepository.GetUserByEmail(email);
+  }
 }

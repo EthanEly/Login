@@ -40,4 +40,16 @@ public class UserController : ControllerBase
 
         return isLoggedIn ? Ok(new { message = "Login successful" }) : Unauthorized();
     }
+
+    [HttpGet("/details/{email}")]
+    public async Task<IActionResult> GetDetails(string email)
+    {
+        var user = await _userService.GetUserByEmail(email);
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+        var mappedUser = user.ToUserDetailsResponse();
+        return Ok(mappedUser);
+    }
 }
