@@ -1,10 +1,7 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using User.Models.UserEntity;
+using User.Models.Domains;
 using User.Respositories;
 using User.Respositories.DatabaseContext;
-using Xunit;
 
 namespace User.Tests.Repositories;
 

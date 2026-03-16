@@ -1,4 +1,4 @@
-namespace User.Models.UserLogin;
+namespace User.Models.ValueObjects;
 
 public class UserLogin
 {

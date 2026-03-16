@@ -1,4 +1,4 @@
-namespace User.Models.UserEntity;
+namespace User.Models.Domains;
 
 public class UserEntity
 {

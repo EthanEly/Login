@@ -1,4 +1,4 @@
-using User.Models.UserEntity;
+using User.Models.Domains;
 
 namespace User.Interfaces.Respositories;
 

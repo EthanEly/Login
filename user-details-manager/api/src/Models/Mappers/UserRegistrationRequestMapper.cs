@@ -1,5 +1,5 @@
 using User.Models.Requests;
-using User.Models.UserRegistration;
+using User.Models.ValueObjects;
 
 namespace User.Mappers;
 

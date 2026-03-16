@@ -1,6 +1,5 @@
-using User.Models.UserRegistration;
-using User.Models.UserLogin;
-using User.Models.UserEntity;
+using User.Models.ValueObjects;
+using User.Models.Domains;
 
 namespace User.Interfaces.Services;
 

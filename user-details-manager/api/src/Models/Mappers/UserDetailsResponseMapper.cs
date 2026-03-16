@@ -1,5 +1,5 @@
-using User.Models.UserEntity;
-using User.Models.UserDetailsResponse;
+using User.Models.Responses;
+using User.Models.Domains;
 
 namespace User.Mappers;
 

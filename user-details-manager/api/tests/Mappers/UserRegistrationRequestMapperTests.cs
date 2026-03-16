@@ -1,6 +1,5 @@
-using Xunit;
-using User.Mappers;
 using User.Models.Requests;
+using User.Mappers;
 
 namespace User.Tests.Mappers;
 

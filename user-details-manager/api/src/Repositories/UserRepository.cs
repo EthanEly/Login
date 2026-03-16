@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using User.Respositories.DatabaseContext;
 using User.Interfaces.Respositories;
-using User.Models.UserEntity;
+using User.Models.Domains;
 
 namespace User.Respositories;
 

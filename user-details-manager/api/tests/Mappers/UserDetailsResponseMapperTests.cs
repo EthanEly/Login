@@ -1,6 +1,5 @@
-using Xunit;
+using User.Models.Domains;
 using User.Mappers;
-using User.Models.UserEntity;
 
 namespace User.Tests.Mappers;
 

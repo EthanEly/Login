@@ -1,4 +1,4 @@
-namespace User.Models.UserRegistration;
+namespace User.Models.ValueObjects;
 
 public class UserRegistration
 {

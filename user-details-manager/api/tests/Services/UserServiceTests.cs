@@ -1,10 +1,8 @@
-using Moq;
 using User.Interfaces.Respositories;
-using User.Models.UserEntity;
-using User.Models.UserLogin;
-using User.Models.UserRegistration;
+using User.Models.ValueObjects;
+using User.Models.Domains;
 using User.Services;
-using Xunit;
+using Moq;
 
 namespace User.Tests.Services;
 

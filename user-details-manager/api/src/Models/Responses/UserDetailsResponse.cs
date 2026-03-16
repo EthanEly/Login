@@ -1,4 +1,4 @@
-namespace User.Models.UserDetailsResponse;
+namespace User.Models.Responses;
 
 public class UserDetailsResponse
 {
