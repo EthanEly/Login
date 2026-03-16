@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { UserFormData, UserRegistrationInformation } from "./models";
 import TextInput from "../../components/textInput";
-import { ValidationError } from "../../../src/common/models";
+import { ValidationError } from "../../common/models";
 
 enum TextInputField {
   FirstName = "first-name",
@@ -115,7 +115,7 @@ export function validateFormData(userData: UserFormData): ValidationError[] {
 
   if (email.trim() === "") {
     errors.push({ field: TextInputField.Email, message: "Email address is required" });
-  } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/.test(email)) {
+  } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
     errors.push({ field: TextInputField.Email, message: "Email address is invalid" });
   }
 
@@ -136,7 +136,7 @@ export function validateFormData(userData: UserFormData): ValidationError[] {
 
 export async function registerUser(userData: UserRegistrationInformation) {
   try {
-    const response = await fetch("http://localhost:5254/register", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

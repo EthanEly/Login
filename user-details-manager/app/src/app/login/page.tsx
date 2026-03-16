@@ -86,7 +86,7 @@ export function validateFormData(userData: UserLoginFormData): ValidationError[]
 
 export async function loginUser(userData: UserLoginInformation) {
   try {
-    const response = await fetch("http://localhost:5254/login", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

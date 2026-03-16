@@ -5,6 +5,20 @@ import * as TextInputMock from "../../src/components/textInput";
 import { UserLoginFormData, UserLoginInformation } from "../../src/app/login/models";
 
 describe("Login Page", () => {
+  const originalEnv = process.env;
+
+  beforeEach(() => {
+    process.env = {
+      ...originalEnv,
+      NEXT_PUBLIC_API_URL: "http://myTestWebsite:8080",
+    };
+  });
+
+  afterEach(() => {
+    process.env = originalEnv;
+    jest.clearAllMocks();
+  });
+
   it("should render the page heading", () => {
     render(<Login />);
 
@@ -123,7 +137,7 @@ describe("Login Page", () => {
 
       await loginUser(userData);
 
-      expect((global as any).fetch).toHaveBeenCalledWith("http://localhost:5254/login", {
+      expect((global as any).fetch).toHaveBeenCalledWith("http://myTestWebsite:8080/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

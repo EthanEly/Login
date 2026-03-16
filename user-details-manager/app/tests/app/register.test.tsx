@@ -5,6 +5,19 @@ import * as TextInputMock from "../../src/components/textInput";
 import { UserFormData, UserRegistrationInformation } from "@/src/app/register/models";
 
 describe("Register Page", () => {
+  const originalEnv = process.env;
+
+  beforeEach(() => {
+    process.env = {
+      ...originalEnv,
+      NEXT_PUBLIC_API_URL: "http://myTestWebsite:8080",
+    };
+  });
+
+  afterEach(() => {
+    process.env = originalEnv;
+    jest.clearAllMocks();
+  });
   it("should render the page heading", () => {
     render(<Register />);
 
@@ -95,6 +108,12 @@ describe("Register Page", () => {
       password: "TEST_PASSWORD",
       confirmPassword: "TEST_PASSWORD",
     };
+
+    it("should not return an error if form is valid", () => {
+      const errors = validateFormData(userData);
+
+      expect(errors).toEqual([]);
+    });
 
     const testArrangement = [
       {
@@ -194,7 +213,7 @@ describe("Register Page", () => {
 
       await registerUser(userData);
 
-      expect((global as any).fetch).toHaveBeenCalledWith("http://localhost:5254/register", {
+      expect((global as any).fetch).toHaveBeenCalledWith("http://myTestWebsite:8080/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

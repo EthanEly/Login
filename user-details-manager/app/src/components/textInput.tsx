@@ -1,5 +1,5 @@
 import { SetStateAction } from "react";
-import { ValidationError } from "../app/register/models";
+import { ValidationError } from "../common/models";
 
 export default function TextInput(props: {
   field: string;
