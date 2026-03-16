@@ -4,6 +4,19 @@ import Login, { loginUser, validateFormData } from "../../src/app/login/page";
 import * as TextInputMock from "../../src/components/textInput";
 import { UserLoginFormData, UserLoginInformation } from "../../src/app/login/models";
 
+jest.mock("../../src/apiClients/AuthContext", () => {
+  return {
+    useAuth: () => ({
+      login: jest.fn(),
+    }),
+  };
+});
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
+}));
+
 describe("Login Page", () => {
   const originalEnv = process.env;
 

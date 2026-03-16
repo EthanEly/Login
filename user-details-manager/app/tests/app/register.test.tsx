@@ -4,6 +4,12 @@ import Register, { registerUser, validateFormData } from "../../src/app/register
 import * as TextInputMock from "../../src/components/textInput";
 import { UserFormData, UserRegistrationInformation } from "@/src/app/register/models";
 
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
+}));
+
 describe("Register Page", () => {
   const originalEnv = process.env;
 

@@ -3,6 +3,8 @@ import { useState } from "react";
 import TextInput from "../../components/textInput";
 import { UserLoginFormData, UserLoginInformation } from "./models";
 import { ValidationError } from "../../../src/common/models";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../../apiClients/AuthContext";
 
 enum TextInputField {
   Email = "email-address",
@@ -10,6 +12,8 @@ enum TextInputField {
 }
 
 export default function Login() {
+  const { login } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<ValidationError[]>([]);
@@ -22,7 +26,12 @@ export default function Login() {
     setErrors(validationErrors);
 
     if (validationErrors.length === 0) {
-      await loginUser({ email, password });
+      const successfulLogin = await loginUser({ email, password });
+
+      if (successfulLogin) {
+        login(email);
+        router.push("/details");
+      }
     }
   };
 
@@ -73,7 +82,7 @@ export function validateFormData(userData: UserLoginFormData): ValidationError[]
 
   if (email.trim() === "") {
     errors.push({ field: TextInputField.Email, message: "Email address is required" });
-  } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/.test(email)) {
+  } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
     errors.push({ field: TextInputField.Email, message: "Email address is invalid" });
   }
 
@@ -98,8 +107,7 @@ export async function loginUser(userData: UserLoginInformation) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const result = await response.json();
-    return result;
+    return true;
   } catch (error) {
     throw error;
   }

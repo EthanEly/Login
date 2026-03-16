@@ -3,6 +3,7 @@ import { useState } from "react";
 import { UserFormData, UserRegistrationInformation } from "./models";
 import TextInput from "../../components/textInput";
 import { ValidationError } from "../../common/models";
+import { useRouter } from "next/navigation";
 
 enum TextInputField {
   FirstName = "first-name",
@@ -13,6 +14,7 @@ enum TextInputField {
 }
 
 export default function Register() {
+  const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,7 +34,11 @@ export default function Register() {
     setErrors(validationErrors);
 
     if (validationErrors.length === 0) {
-      await registerUser({ firstName, lastName, email, password });
+      const successfulRegistration = await registerUser({ firstName, lastName, email, password });
+
+      if (successfulRegistration) {
+        router.push("/login");
+      }
     }
   };
 
@@ -148,8 +154,7 @@ export async function registerUser(userData: UserRegistrationInformation) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const result = await response.json();
-    return result;
+    return true;
   } catch (error) {
     throw error;
   }
