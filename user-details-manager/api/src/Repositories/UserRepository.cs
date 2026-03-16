@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using User.Respositories.DatabaseContext;
 using User.Interfaces.Respositories;
 using User.Models.UserEntity;
 
@@ -23,13 +24,4 @@ public class UserRepository : IUserRepository
   {
     return await _dbContext.Users.FirstOrDefaultAsync(user => user.Email == email);
   }
-}
-
-public class UserDbContext : DbContext
-{
-  public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
-  {
-  }
-
-  public DbSet<UserEntity> Users { get; set; }
 }

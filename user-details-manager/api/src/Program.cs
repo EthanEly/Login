@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using User.Interfaces.Services;
 using User.Interfaces.Respositories;
+using User.Respositories.DatabaseContext;
 using User.Services.UserService;
 using User.Respositories.UserRepository;
 using User.Models.UserRegistration;

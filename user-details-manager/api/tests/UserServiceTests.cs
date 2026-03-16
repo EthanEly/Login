@@ -1,0 +1,134 @@
+using Moq;
+using User.Interfaces.Respositories;
+using User.Models.UserEntity;
+using User.Models.UserLogin;
+using User.Models.UserRegistration;
+using User.Services.UserService;
+using Xunit;
+
+namespace User.Tests.Services;
+
+public class UserServiceTests
+{
+  private readonly Mock<IUserRepository> _userRepositoryMock;
+  private readonly UserService _userService;
+
+  public UserServiceTests()
+  {
+    _userRepositoryMock = new Mock<IUserRepository>();
+    _userService = new UserService(_userRepositoryMock.Object);
+  }
+
+  [Fact]
+  public async Task Register_ShouldCreateUser_WhenEmailIsNotInUse()
+  {
+    // Arrange
+    var registration = new UserRegistration
+    {
+      Email = "test@example.com",
+      FirstName = "Test",
+      LastName = "User",
+      Password = "password123"
+    };
+
+    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(registration.Email))
+        .ReturnsAsync((UserEntity?)null);
+
+    // Act
+    await _userService.Register(registration);
+
+    // Assert
+    _userRepositoryMock.Verify(repo => repo.CreateUser(It.Is<UserEntity>(u =>
+        u.Email == registration.Email &&
+        u.FirstName == registration.FirstName &&
+        u.LastName == registration.LastName &&
+        BCrypt.Net.BCrypt.Verify(registration.Password, u.PasswordHash)
+    )), Times.Once);
+  }
+
+  [Fact]
+  public async Task Register_ShouldThrowInvalidOperationException_WhenEmailIsAlreadyInUse()
+  {
+    // Arrange
+    var registration = new UserRegistration
+    {
+      Email = "test@example.com",
+      Password = "password123",
+      FirstName = "Test",
+      LastName = "User"
+    };
+    var existingUser = new UserEntity
+    {
+      Email = registration.Email,
+      FirstName = "Test",
+      LastName = "User",
+      PasswordHash = "some_hash"
+    };
+
+    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(registration.Email)).ReturnsAsync(existingUser);
+
+    // Act & Assert
+    var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _userService.Register(registration));
+    Assert.Equal("Email address already in use", exception.Message);
+    _userRepositoryMock.Verify(repo => repo.CreateUser(It.IsAny<UserEntity>()), Times.Never);
+  }
+
+  [Fact]
+  public async Task Login_ShouldReturnTrue_WhenCredentialsAreValid()
+  {
+    // Arrange
+    var login = new UserLogin { Email = "test@example.com", Password = "password123" };
+    var user = new UserEntity
+    {
+      Email = login.Email,
+      PasswordHash = BCrypt.Net.BCrypt.HashPassword(login.Password),
+      FirstName = "Test",
+      LastName = "User"
+    };
+
+    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(login.Email)).ReturnsAsync(user);
+
+    // Act
+    var result = await _userService.Login(login);
+
+    // Assert
+    Assert.True(result);
+  }
+
+  [Fact]
+  public async Task Login_ShouldReturnFalse_WhenUserDoesNotExist()
+  {
+    // Arrange
+    var login = new UserLogin { Email = "test@example.com", Password = "password123" };
+
+    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(login.Email)).ReturnsAsync((UserEntity?)null);
+
+    // Act
+    var result = await _userService.Login(login);
+
+    // Assert
+    Assert.False(result);
+  }
+
+  [Fact]
+  public async Task Login_ShouldReturnFalse_WhenPasswordIsIncorrect()
+  {
+    // Arrange
+    var login = new UserLogin { Email = "test@example.com", Password = "password123" };
+    var user = new UserEntity
+    {
+      Email = login.Email,
+      PasswordHash = BCrypt.Net.BCrypt.HashPassword("wrongpassword"),
+      FirstName = "Test",
+      LastName = "User"
+    };
+
+    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(login.Email)).ReturnsAsync(user);
+
+    // Act
+    var result = await _userService.Login(login);
+
+    // Assert
+    Assert.False(result);
+  }
+}
