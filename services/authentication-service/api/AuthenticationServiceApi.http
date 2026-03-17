@@ -1,0 +1,21 @@
+@AuthenticationServiceApi_HostAddress = http://localhost:8083
+
+### Register a new user
+POST {{AuthenticationServiceApi_HostAddress}}/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "firstName": "Test",
+  "lastName": "User",
+  "password": "password123"
+}
+
+### Login with existing user
+POST {{AuthenticationServiceApi_HostAddress}}/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
