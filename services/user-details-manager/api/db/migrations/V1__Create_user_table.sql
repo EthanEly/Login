@@ -1,7 +1,7 @@
-CREATE SCHEMA IF NOT EXISTS user_details;
+CREATE SCHEMA IF NOT EXISTS user;
 
 CREATE TABLE
-  user_details.users (
+  user.users_details (
     id SERIAL PRIMARY KEY,
     email TEXT NOT NULL UNIQUE,
     first_name TEXT NOT NULL,
