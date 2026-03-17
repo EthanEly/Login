@@ -1,9 +1,4 @@
-import {
-  isNotNull,
-  isNotUndefined,
-  isObject,
-  isStringAndDefined,
-} from "../../../src/common/helpers";
+import { isNotNull, isNotUndefined, isObject, isStringAndDefined } from "../../common/helpers";
 
 export interface UserDetails {
   firstName: string;

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import TextInput from "../../components/textInput";
 import { UserLoginFormData, UserLoginInformation } from "./models";
-import { ValidationError } from "../../../src/common/models";
+import { ValidationError } from "../../common/models";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../apiClients/AuthContext";
 

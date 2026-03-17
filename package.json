@@ -1,5 +1,5 @@
 {
-  "name": "login",
+  "name": "login-service",
   "version": "1.0.0",
   "description": "Welcome to the Login repository.",
   "scripts": {

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { isUserDetails, UserDetails } from "./models";
-import { useAuth } from "../../../src/apiClients/AuthContext";
+import { useAuth } from "../../apiClients/AuthContext";
 import { useRouter } from "next/navigation";
 
 export default function DetailsPage() {
