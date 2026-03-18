@@ -25,7 +25,6 @@ public class UserServiceTests
     var registration = new UserRegistration
     {
       AccountId = 456,
-      Email = "test@example.com",
       FirstName = "Test",
       LastName = "User",
     };
@@ -39,7 +38,6 @@ public class UserServiceTests
     // Assert
     _userRepositoryMock.Verify(repo => repo.CreateUser(It.Is<UserEntity>(u =>
         u.Id == registration.AccountId &&
-        u.Email == registration.Email &&
         u.FirstName == registration.FirstName &&
         u.LastName == registration.LastName
     )), Times.Once);
@@ -52,14 +50,12 @@ public class UserServiceTests
     var registration = new UserRegistration
     {
       AccountId = 456,
-      Email = "test@example.com",
       FirstName = "Test",
       LastName = "User"
     };
     var existingUser = new UserEntity
     {
       Id = 456,
-      Email = "test@example.com",
       FirstName = "Test",
       LastName = "User",
     };
@@ -72,44 +68,6 @@ public class UserServiceTests
     _userRepositoryMock.Verify(repo => repo.CreateUser(It.IsAny<UserEntity>()), Times.Never);
   }
 
-
-  [Fact]
-  public async Task GetUserIdByEmail_ShouldReturnUser_WhenUserExists()
-  {
-    // Arrange
-    var email = "test@example.com";
-    var expectedUser = new UserEntity
-    {
-      Id = 456,
-      Email = "test@example.com",
-      FirstName = "Test",
-      LastName = "User",
-    };
-
-    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(email)).ReturnsAsync(expectedUser);
-
-    // Act
-    var result = await _userService.GetUserIdByEmail(email);
-
-    // Assert
-    Assert.NotNull(result);
-    Assert.Equal(expectedUser.Id, result);
-  }
-
-  [Fact]
-  public async Task GetUserIdByEmail_ShouldReturnNull_WhenUserDoesNotExist()
-  {
-    // Arrange
-    var email = "test@example.com";
-    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(email)).ReturnsAsync((UserEntity?)null);
-
-    // Act
-    var result = await _userService.GetUserIdByEmail(email);
-
-    // Assert
-    Assert.Null(result);
-  }
-
   [Fact]
   public async Task GetUserById_ShouldReturnUser_WhenUserExists()
   {
@@ -118,7 +76,6 @@ public class UserServiceTests
     var expectedUser = new UserEntity
     {
       Id = 456,
-      Email = "test@example.com",
       FirstName = "Test",
       LastName = "User",
     };

@@ -27,22 +27,11 @@ public class UserService : IUserService
     var newUser = new UserEntity
     {
       Id = registration.AccountId,
-      Email = registration.Email,
       FirstName = registration.FirstName,
       LastName = registration.LastName,
     };
 
     await _userRepository.CreateUser(newUser);
-  }
-
-  public async Task<int?> GetUserIdByEmail(string email)
-  {
-    var foundUser = await _userRepository.GetUserByEmail(email);
-    if (foundUser == null)
-    {
-      return null;
-    }
-    return foundUser.Id;
   }
 
   public async Task<UserEntity?> GetUserById(int id)

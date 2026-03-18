@@ -27,7 +27,6 @@ public class UserRepositoryTests : IDisposable
     var newUser = new UserEntity
     {
       Id = 456,
-      Email = "test@example.com",
       FirstName = "Test",
       LastName = "User",
     };
@@ -45,37 +44,12 @@ public class UserRepositoryTests : IDisposable
   }
 
   [Fact]
-  public async Task GetUserByEmail_ShouldReturnUser_WhenUserExists()
-  {
-    // Arrange
-    var existingUser = new UserEntity
-    {
-      Email = "test@example.com",
-      FirstName = "Test",
-      LastName = "User",
-    };
-    await _dbContext.Users.AddAsync(existingUser);
-    await _dbContext.SaveChangesAsync();
-
-    // Act
-    var foundUser = await _userRepository.GetUserByEmail("test@example.com");
-
-    // Assert
-    Assert.NotNull(foundUser);
-    Assert.Equal(existingUser.Email, foundUser.Email);
-    Assert.Equal(existingUser.FirstName, foundUser.FirstName);
-    Assert.Equal(existingUser.LastName, foundUser.LastName);
-  }
-
-
-  [Fact]
   public async Task GetUserById_ShouldReturnUser_WhenUserExists()
   {
     // Arrange
     var existingUser = new UserEntity
     {
       Id = 456,
-      Email = "test@example.com",
       FirstName = "Test",
       LastName = "User",
     };
@@ -87,7 +61,6 @@ public class UserRepositoryTests : IDisposable
 
     // Assert
     Assert.NotNull(foundUser);
-    Assert.Equal(existingUser.Email, foundUser.Email);
     Assert.Equal(existingUser.FirstName, foundUser.FirstName);
     Assert.Equal(existingUser.LastName, foundUser.LastName);
   }

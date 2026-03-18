@@ -13,7 +13,6 @@ public class UserRegistrationRequestMapperTests
     {
       FirstName = "Test",
       LastName = "User",
-      Email = "test@example.com",
       AccountId = 456
     };
 
@@ -23,7 +22,6 @@ public class UserRegistrationRequestMapperTests
     // Assert
     Assert.Equal(entity.FirstName, request.FirstName);
     Assert.Equal(entity.LastName, request.LastName);
-    Assert.Equal(entity.Email, request.Email);
     Assert.Equal(entity.AccountId, request.AccountId);
   }
 }

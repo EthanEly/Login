@@ -12,7 +12,6 @@ public static class UserDetailsResponseMapper
       Id = entity.Id,
       FirstName = entity.FirstName,
       LastName = entity.LastName,
-      Email = entity.Email,
     };
   }
 }

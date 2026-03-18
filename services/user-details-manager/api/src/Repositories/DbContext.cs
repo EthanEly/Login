@@ -16,9 +16,8 @@ public class UserDbContext : DbContext
     base.OnModelCreating(modelBuilder);
     modelBuilder.Entity<UserEntity>(entity =>
     {
-      entity.ToTable("user_details", "users");
+      entity.ToTable("user_details", "user_details_manager");
       entity.Property(e => e.Id).HasColumnName("id");
-      entity.Property(e => e.Email).HasColumnName("email");
       entity.Property(e => e.FirstName).HasColumnName("first_name");
       entity.Property(e => e.LastName).HasColumnName("last_name");
     });

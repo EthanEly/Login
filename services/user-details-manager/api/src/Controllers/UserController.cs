@@ -31,17 +31,6 @@ public class UserController : ControllerBase
             return Conflict(new { message = ex.Message });
         }
     }
-    [
-    HttpGet("/{email}")]
-    public async Task<IActionResult> GetUserId(string email)
-    {
-        var userId = await _userService.GetUserIdByEmail(email);
-        if (userId == null)
-        {
-            return NotFound(new { message = "User not found" });
-        }
-        return Ok(userId);
-    }
 
     [HttpGet("/details/{id}")]
     public async Task<IActionResult> GetDetails(int id)

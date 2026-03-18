@@ -23,7 +23,7 @@ services:
 
   flyway-migrator:
     image: flyway/flyway
-    command: -url=jdbc:postgresql://postgres_db:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -connectRetries=60 -cleanDisabled=false -schemas=user_details clean migrate
+    command: -url=jdbc:postgresql://postgres_db:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -connectRetries=60 -cleanDisabled=false -schemas=authentication_service clean migrate
     volumes:
       - ./db/migrations:/flyway/sql
     depends_on:

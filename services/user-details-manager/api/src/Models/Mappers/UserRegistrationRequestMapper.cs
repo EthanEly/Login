@@ -11,7 +11,6 @@ public static class UserRegistrationMapper
     {
       FirstName = request.FirstName,
       LastName = request.LastName,
-      Email = request.Email,
       AccountId = request.AccountId,
     };
   }

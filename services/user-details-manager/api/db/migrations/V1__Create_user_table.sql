@@ -1,10 +1,8 @@
-CREATE SCHEMA IF NOT EXISTS user;
+CREATE SCHEMA IF NOT EXISTS user_details_manager;
 
 CREATE TABLE
-  user.users_details (
-    id SERIAL PRIMARY KEY,
-    email TEXT NOT NULL UNIQUE,
+  IF NOT EXISTS user_details_manager.users_details (
+    id INTEGER PRIMARY KEY,
     first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    password_hash TEXT NOT NULL
+    last_name TEXT NOT NULL
   );

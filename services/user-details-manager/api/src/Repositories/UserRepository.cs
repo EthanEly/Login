@@ -20,11 +20,6 @@ public class UserRepository : IUserRepository
     await _dbContext.SaveChangesAsync();
   }
 
-  public async Task<UserEntity?> GetUserByEmail(string email)
-  {
-    return await _dbContext.Users.FirstOrDefaultAsync(user => user.Email == email);
-  }
-
   public async Task<UserEntity?> GetUserById(int id)
   {
     return await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == id);

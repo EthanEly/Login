@@ -14,7 +14,6 @@ public class UserDetailsResponseMapperTests
       Id = 1,
       FirstName = "Test",
       LastName = "User",
-      Email = "test@example.com",
     };
 
     // Act
@@ -24,6 +23,5 @@ public class UserDetailsResponseMapperTests
     Assert.Equal(response.Id, entity.Id);
     Assert.Equal(response.FirstName, entity.FirstName);
     Assert.Equal(response.LastName, entity.LastName);
-    Assert.Equal(response.Email, entity.Email);
   }
 }
