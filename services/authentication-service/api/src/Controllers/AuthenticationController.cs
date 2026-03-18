@@ -36,8 +36,8 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
     {
         var userAccount = request.ToUserLogin();
-        var isLoggedIn = await _authenticationService.Login(userAccount);
+        var token = await _authenticationService.Login(userAccount);
 
-        return isLoggedIn ? Ok(new { message = "Login successful" }) : Unauthorized();
+        return token != null ? Ok(new { token }) : Unauthorized();
     }
 }

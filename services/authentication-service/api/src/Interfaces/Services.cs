@@ -6,5 +6,5 @@ namespace Auth.Interfaces.Services;
 public interface IAuthenticationService
 {
   Task Register(UserRegistration registration);
-  Task<bool> Login(UserLogin login);
+  Task<string?> Login(UserLogin login);
 }

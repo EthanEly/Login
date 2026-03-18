@@ -3,19 +3,30 @@ using Auth.Models.ValueObjects;
 using Auth.Models.Domains;
 using Auth.Services;
 using Moq;
-using System.Data.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace Auth.Tests.Services;
 
 public class AuthenticationServiceTests
 {
   private readonly Mock<IAuthenticationRepository> _authenticationRepositoryMock;
+  private readonly Mock<IConfiguration> _configurationMock;
   private readonly AuthenticationService _authenticationService;
 
   public AuthenticationServiceTests()
   {
     _authenticationRepositoryMock = new Mock<IAuthenticationRepository>();
-    _authenticationService = new AuthenticationService(_authenticationRepositoryMock.Object);
+    _configurationMock = new Mock<IConfiguration>();
+
+    var jwtSettings = new Dictionary<string, string>
+    {
+        {"Jwt:Key", "a92c016e30094921a9719391054350117367468132924195b002135659858712"},
+        {"Jwt:Issuer", "TestIssuer"},
+        {"Jwt:Audience", "TestAudience"}
+    };
+    _configurationMock.Setup(c => c[It.IsAny<string>()]).Returns((string key) => jwtSettings.ContainsKey(key) ? jwtSettings[key] : null);
+
+    _authenticationService = new AuthenticationService(_authenticationRepositoryMock.Object, _configurationMock.Object);
   }
 
   [Fact]
@@ -70,12 +81,13 @@ public class AuthenticationServiceTests
   }
 
   [Fact]
-  public async Task Login_ShouldReturnTrue_WhenCredentialsAreValid()
+  public async Task Login_ShouldReturnToken_WhenCredentialsAreValid()
   {
     // Arrange
     var login = new UserLogin { Email = "test@example.com", Password = "password123" };
     var user = new UserAccount
     {
+      Id = 1,
       Email = login.Email,
       PasswordHash = BCrypt.Net.BCrypt.HashPassword(login.Password)
     };
@@ -86,11 +98,11 @@ public class AuthenticationServiceTests
     var result = await _authenticationService.Login(login);
 
     // Assert
-    Assert.True(result);
+    Assert.NotNull(result);
   }
 
   [Fact]
-  public async Task Login_ShouldReturnFalse_WhenUserDoesNotExist()
+  public async Task Login_ShouldReturnNull_WhenUserDoesNotExist()
   {
     // Arrange
     var login = new UserLogin { Email = "test@example.com", Password = "password123" };
@@ -101,11 +113,11 @@ public class AuthenticationServiceTests
     var result = await _authenticationService.Login(login);
 
     // Assert
-    Assert.False(result);
+    Assert.Null(result);
   }
 
   [Fact]
-  public async Task Login_ShouldReturnFalse_WhenPasswordIsIncorrect()
+  public async Task Login_ShouldReturnNull_WhenPasswordIsIncorrect()
   {
     // Arrange
     var login = new UserLogin { Email = "test@example.com", Password = "password123" };
@@ -121,6 +133,6 @@ public class AuthenticationServiceTests
     var result = await _authenticationService.Login(login);
 
     // Assert
-    Assert.False(result);
+    Assert.Null(result);
   }
 }

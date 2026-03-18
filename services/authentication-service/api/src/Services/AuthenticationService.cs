@@ -2,16 +2,25 @@ using Auth.Interfaces.Services;
 using Auth.Interfaces.Respositories;
 using Auth.Models.ValueObjects;
 using Auth.Models.Domains;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Auth.Services;
 
 public class AuthenticationService : IAuthenticationService
 {
   private readonly IAuthenticationRepository _authenticationRepository;
+  private readonly IConfiguration _configuration;
 
-  public AuthenticationService(IAuthenticationRepository authenticationRepository)
+  public AuthenticationService(
+    IAuthenticationRepository authenticationRepository,
+    IConfiguration configuration)
   {
     _authenticationRepository = authenticationRepository;
+    _configuration = configuration;
   }
 
   public async Task Register(UserRegistration registration)
@@ -34,15 +43,34 @@ public class AuthenticationService : IAuthenticationService
     // TODO: emit event with details to create user details
   }
 
-  public async Task<bool> Login(UserLogin login)
+  public async Task<string?> Login(UserLogin login)
   {
-    var Auth = await _authenticationRepository.GetAccountByEmail(login.Email);
+    var userAccount = await _authenticationRepository.GetAccountByEmail(login.Email);
 
-    if (Auth == null || !BCrypt.Net.BCrypt.Verify(login.Password, Auth.PasswordHash))
+    if (userAccount == null || !BCrypt.Net.BCrypt.Verify(login.Password, userAccount.PasswordHash))
     {
-      return false;
+      return null;
     }
 
-    return true;
+    var tokenHandler = new JwtSecurityTokenHandler();
+    var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+
+    var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, userAccount.Id.ToString()),
+        new Claim(ClaimTypes.Email, userAccount.Email),
+    };
+
+    var tokenDescriptor = new SecurityTokenDescriptor
+    {
+      Subject = new ClaimsIdentity(claims),
+      Expires = DateTime.UtcNow.AddHours(1),
+      Issuer = _configuration["Jwt:Issuer"],
+      Audience = _configuration["Jwt:Audience"],
+      SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+    };
+
+    var token = tokenHandler.CreateToken(tokenDescriptor);
+    return tokenHandler.WriteToken(token);
   }
 }
