@@ -23,7 +23,7 @@ describe("Login Page", () => {
   beforeEach(() => {
     process.env = {
       ...originalEnv,
-      NEXT_PUBLIC_API_URL: "http://myTestWebsite:8080",
+      NEXT_PUBLIC_AUTH_API_URL: "http://myTestWebsite:8080",
     };
   });
 

@@ -27,7 +27,7 @@ describe("Details Page", () => {
   beforeEach(() => {
     process.env = {
       ...originalEnv,
-      NEXT_PUBLIC_API_URL: "http://myTestWebsite:8080",
+      NEXT_PUBLIC_USER_API_URL: "http://myTestWebsite:8080",
     };
     (global as any).fetch = jest.fn().mockResolvedValue({
       ok: true,

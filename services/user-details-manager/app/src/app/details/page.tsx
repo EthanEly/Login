@@ -96,7 +96,7 @@ export default function DetailsPage() {
 
 export async function getUserDetails(userEmail: string): Promise<UserDetails> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/details/${userEmail}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_USER_API_URL}/details/${userEmail}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
