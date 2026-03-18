@@ -16,12 +16,11 @@ public class UserDbContext : DbContext
     base.OnModelCreating(modelBuilder);
     modelBuilder.Entity<UserEntity>(entity =>
     {
-      entity.ToTable("users", "user_details");
+      entity.ToTable("user_details", "users");
       entity.Property(e => e.Id).HasColumnName("id");
       entity.Property(e => e.Email).HasColumnName("email");
       entity.Property(e => e.FirstName).HasColumnName("first_name");
       entity.Property(e => e.LastName).HasColumnName("last_name");
-      entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
     });
   }
 

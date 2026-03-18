@@ -1,3 +1,4 @@
+using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using User.Models.Domains;
 using User.Respositories;
@@ -25,23 +26,22 @@ public class UserRepositoryTests : IDisposable
     // Arrange
     var newUser = new UserEntity
     {
+      Id = 456,
       Email = "test@example.com",
       FirstName = "Test",
       LastName = "User",
-      PasswordHash = "GENERATED_PASSWORD_HASH"
     };
 
     // Act
     await _userRepository.CreateUser(newUser);
 
     // Assert
-    var createdUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == "test@example.com");
+    var createdUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == 456);
 
     Assert.NotNull(createdUser);
-    Assert.Equal(newUser.Email, createdUser.Email);
+    Assert.Equal(newUser.Id, createdUser.Id);
     Assert.Equal(newUser.FirstName, createdUser.FirstName);
     Assert.Equal(newUser.LastName, createdUser.LastName);
-    Assert.Equal(newUser.PasswordHash, createdUser.PasswordHash);
   }
 
   [Fact]
@@ -53,13 +53,37 @@ public class UserRepositoryTests : IDisposable
       Email = "test@example.com",
       FirstName = "Test",
       LastName = "User",
-      PasswordHash = "GENERATED_PASSWORD_HASH"
     };
     await _dbContext.Users.AddAsync(existingUser);
     await _dbContext.SaveChangesAsync();
 
     // Act
     var foundUser = await _userRepository.GetUserByEmail("test@example.com");
+
+    // Assert
+    Assert.NotNull(foundUser);
+    Assert.Equal(existingUser.Email, foundUser.Email);
+    Assert.Equal(existingUser.FirstName, foundUser.FirstName);
+    Assert.Equal(existingUser.LastName, foundUser.LastName);
+  }
+
+
+  [Fact]
+  public async Task GetUserById_ShouldReturnUser_WhenUserExists()
+  {
+    // Arrange
+    var existingUser = new UserEntity
+    {
+      Id = 456,
+      Email = "test@example.com",
+      FirstName = "Test",
+      LastName = "User",
+    };
+    await _dbContext.Users.AddAsync(existingUser);
+    await _dbContext.SaveChangesAsync();
+
+    // Act
+    var foundUser = await _userRepository.GetUserById(456);
 
     // Assert
     Assert.NotNull(foundUser);

@@ -18,18 +18,19 @@ public class UserServiceTests
   }
 
   [Fact]
-  public async Task Register_ShouldCreateUser_WhenEmailIsNotInUse()
+  public async Task Register_ShouldCreateUser_WhenUserDetailsDoNotExist()
   {
     // Arrange
+    var id = 456;
     var registration = new UserRegistration
     {
+      AccountId = 456,
       Email = "test@example.com",
       FirstName = "Test",
       LastName = "User",
-      Password = "password123"
     };
 
-    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(registration.Email))
+    _userRepositoryMock.Setup(repo => repo.GetUserById(id))
         .ReturnsAsync((UserEntity?)null);
 
     // Act
@@ -37,133 +38,112 @@ public class UserServiceTests
 
     // Assert
     _userRepositoryMock.Verify(repo => repo.CreateUser(It.Is<UserEntity>(u =>
+        u.Id == registration.AccountId &&
         u.Email == registration.Email &&
         u.FirstName == registration.FirstName &&
-        u.LastName == registration.LastName &&
-        BCrypt.Net.BCrypt.Verify(registration.Password, u.PasswordHash)
+        u.LastName == registration.LastName
     )), Times.Once);
   }
 
   [Fact]
-  public async Task Register_ShouldThrowInvalidOperationException_WhenEmailIsAlreadyInUse()
+  public async Task Register_ShouldThrowInvalidOperationException_WhenUserDetailsAlreadyExists()
   {
     // Arrange
     var registration = new UserRegistration
     {
+      AccountId = 456,
       Email = "test@example.com",
-      Password = "password123",
       FirstName = "Test",
       LastName = "User"
     };
     var existingUser = new UserEntity
     {
-      Email = registration.Email,
+      Id = 456,
+      Email = "test@example.com",
       FirstName = "Test",
       LastName = "User",
-      PasswordHash = "GENERATED_HASH"
     };
 
-    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(registration.Email)).ReturnsAsync(existingUser);
+    _userRepositoryMock.Setup(repo => repo.GetUserById(registration.AccountId)).ReturnsAsync(existingUser);
 
     // Act & Assert
     var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _userService.Register(registration));
-    Assert.Equal("Email address already in use", exception.Message);
+    Assert.Equal("User details already exist for ID: " + registration.AccountId.ToString() + ".", exception.Message);
     _userRepositoryMock.Verify(repo => repo.CreateUser(It.IsAny<UserEntity>()), Times.Never);
   }
 
-  [Fact]
-  public async Task Login_ShouldReturnTrue_WhenCredentialsAreValid()
-  {
-    // Arrange
-    var login = new UserLogin { Email = "test@example.com", Password = "password123" };
-    var user = new UserEntity
-    {
-      Email = login.Email,
-      PasswordHash = BCrypt.Net.BCrypt.HashPassword(login.Password),
-      FirstName = "Test",
-      LastName = "User"
-    };
-
-    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(login.Email)).ReturnsAsync(user);
-
-    // Act
-    var result = await _userService.Login(login);
-
-    // Assert
-    Assert.True(result);
-  }
 
   [Fact]
-  public async Task Login_ShouldReturnFalse_WhenUserDoesNotExist()
-  {
-    // Arrange
-    var login = new UserLogin { Email = "test@example.com", Password = "password123" };
-
-    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(login.Email)).ReturnsAsync((UserEntity?)null);
-
-    // Act
-    var result = await _userService.Login(login);
-
-    // Assert
-    Assert.False(result);
-  }
-
-  [Fact]
-  public async Task Login_ShouldReturnFalse_WhenPasswordIsIncorrect()
-  {
-    // Arrange
-    var login = new UserLogin { Email = "test@example.com", Password = "password123" };
-    var user = new UserEntity
-    {
-      Email = login.Email,
-      PasswordHash = BCrypt.Net.BCrypt.HashPassword("WRONG_PASSWORD"),
-      FirstName = "Test",
-      LastName = "User"
-    };
-
-    _userRepositoryMock.Setup(repo => repo.GetUserByEmail(login.Email)).ReturnsAsync(user);
-
-    // Act
-    var result = await _userService.Login(login);
-
-    // Assert
-    Assert.False(result);
-  }
-
-  [Fact]
-  public async Task GetUserByEmail_ShouldReturnUser_WhenUserExists()
+  public async Task GetUserIdByEmail_ShouldReturnUser_WhenUserExists()
   {
     // Arrange
     var email = "test@example.com";
     var expectedUser = new UserEntity
     {
+      Id = 456,
       Email = "test@example.com",
       FirstName = "Test",
       LastName = "User",
-      PasswordHash = "GENERATED_HASH"
     };
 
     _userRepositoryMock.Setup(repo => repo.GetUserByEmail(email)).ReturnsAsync(expectedUser);
 
     // Act
-    var result = await _userService.GetUserByEmail(email);
+    var result = await _userService.GetUserIdByEmail(email);
 
     // Assert
     Assert.NotNull(result);
-    Assert.Equal(expectedUser.FirstName, result.FirstName);
-    Assert.Equal(expectedUser.LastName, result.LastName);
-    Assert.Equal(expectedUser.PasswordHash, result.PasswordHash);
+    Assert.Equal(expectedUser.Id, result);
   }
 
   [Fact]
-  public async Task GetUserByEmail_ShouldReturnNull_WhenUserDoesNotExist()
+  public async Task GetUserIdByEmail_ShouldReturnNull_WhenUserDoesNotExist()
   {
     // Arrange
     var email = "test@example.com";
     _userRepositoryMock.Setup(repo => repo.GetUserByEmail(email)).ReturnsAsync((UserEntity?)null);
 
     // Act
-    var result = await _userService.GetUserByEmail(email);
+    var result = await _userService.GetUserIdByEmail(email);
+
+    // Assert
+    Assert.Null(result);
+  }
+
+  [Fact]
+  public async Task GetUserById_ShouldReturnUser_WhenUserExists()
+  {
+    // Arrange
+    var id = 456;
+    var expectedUser = new UserEntity
+    {
+      Id = 456,
+      Email = "test@example.com",
+      FirstName = "Test",
+      LastName = "User",
+    };
+
+    _userRepositoryMock.Setup(repo => repo.GetUserById(id)).ReturnsAsync(expectedUser);
+
+    // Act
+    var result = await _userService.GetUserById(id);
+
+    // Assert
+    Assert.NotNull(result);
+    Assert.Equal(id, result.Id);
+    Assert.Equal(expectedUser.FirstName, result.FirstName);
+    Assert.Equal(expectedUser.LastName, result.LastName);
+  }
+
+  [Fact]
+  public async Task GetUserById_ShouldReturnNull_WhenUserDoesNotExist()
+  {
+    // Arrange
+    var id = 456;
+    _userRepositoryMock.Setup(repo => repo.GetUserById(id)).ReturnsAsync((UserEntity?)null);
+
+    // Act
+    var result = await _userService.GetUserById(id);
 
     // Assert
     Assert.Null(result);

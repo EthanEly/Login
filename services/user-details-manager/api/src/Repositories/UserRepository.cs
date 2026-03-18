@@ -24,4 +24,9 @@ public class UserRepository : IUserRepository
   {
     return await _dbContext.Users.FirstOrDefaultAsync(user => user.Email == email);
   }
+
+  public async Task<UserEntity?> GetUserById(int id)
+  {
+    return await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == id);
+  }
 }

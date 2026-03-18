@@ -6,6 +6,6 @@ namespace User.Interfaces.Services;
 public interface IUserService
 {
   Task Register(UserRegistration registration);
-  Task<bool> Login(UserLogin login);
-  Task<UserEntity?> GetUserByEmail(string email);
+  Task<int?> GetUserIdByEmail(string email);
+  Task<UserEntity?> GetUserById(int id);
 }

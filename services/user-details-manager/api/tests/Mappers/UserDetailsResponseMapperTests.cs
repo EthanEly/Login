@@ -15,7 +15,6 @@ public class UserDetailsResponseMapperTests
       FirstName = "Test",
       LastName = "User",
       Email = "test@example.com",
-      PasswordHash = "password123"
     };
 
     // Act

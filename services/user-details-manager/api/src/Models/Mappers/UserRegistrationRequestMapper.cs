@@ -12,7 +12,7 @@ public static class UserRegistrationMapper
       FirstName = request.FirstName,
       LastName = request.LastName,
       Email = request.Email,
-      Password = request.Password
+      AccountId = request.AccountId,
     };
   }
 }

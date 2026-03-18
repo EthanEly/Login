@@ -14,7 +14,7 @@ public class UserRegistrationRequestMapperTests
       FirstName = "Test",
       LastName = "User",
       Email = "test@example.com",
-      Password = "password123"
+      AccountId = 456
     };
 
     // Act
@@ -24,6 +24,6 @@ public class UserRegistrationRequestMapperTests
     Assert.Equal(entity.FirstName, request.FirstName);
     Assert.Equal(entity.LastName, request.LastName);
     Assert.Equal(entity.Email, request.Email);
-    Assert.Equal(entity.Password, request.Password);
+    Assert.Equal(entity.AccountId, request.AccountId);
   }
 }

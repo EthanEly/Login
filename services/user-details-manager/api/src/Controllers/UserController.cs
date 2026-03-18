@@ -31,20 +31,22 @@ public class UserController : ControllerBase
             return Conflict(new { message = ex.Message });
         }
     }
-
-    [HttpPost("/login")]
-    public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
+    [
+    HttpGet("/{email}")]
+    public async Task<IActionResult> GetUserId(string email)
     {
-        var userEntity = request.ToUserLoginEntity();
-        var isLoggedIn = await _userService.Login(userEntity);
-
-        return isLoggedIn ? Ok(new { message = "Login successful" }) : Unauthorized();
+        var userId = await _userService.GetUserIdByEmail(email);
+        if (userId == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+        return Ok(userId);
     }
 
-    [HttpGet("/details/{email}")]
-    public async Task<IActionResult> GetDetails(string email)
+    [HttpGet("/details/{id}")]
+    public async Task<IActionResult> GetDetails(int id)
     {
-        var user = await _userService.GetUserByEmail(email);
+        var user = await _userService.GetUserById(id);
         if (user == null)
         {
             return NotFound(new { message = "User not found" });
