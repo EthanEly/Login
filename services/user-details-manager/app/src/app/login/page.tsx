@@ -26,10 +26,10 @@ export default function Login() {
     setErrors(validationErrors);
 
     if (validationErrors.length === 0) {
-      const successfulLogin = await loginUser({ email, password });
+      const tokenGranted = await loginUser({ email, password });
 
-      if (successfulLogin) {
-        login(email);
+      if (tokenGranted) {
+        login(tokenGranted.token);
         router.push("/details");
       }
     }
@@ -107,7 +107,7 @@ export async function loginUser(userData: UserLoginInformation) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    return true;
+    return response.json();
   } catch (error) {
     throw error;
   }

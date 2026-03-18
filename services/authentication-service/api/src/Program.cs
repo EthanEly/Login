@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Auth.Interfaces.Respositories;
 using Auth.Interfaces.Services;
+using Auth.Clients;
 using Auth.Respositories.DatabaseContext;
 using Auth.Respositories;
 using Auth.Services;
@@ -58,6 +59,11 @@ builder.Services.AddDbContext<AuthenticationDbContext>(options =>
 
 builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+builder.Services.AddHttpClient<UserDetailsClient>(client =>
+{
+    client.BaseAddress = new Uri("http://user-details-manager:8080/");
+});
 
 builder.Services.AddEndpointsApiExplorer();
 

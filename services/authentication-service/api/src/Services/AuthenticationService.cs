@@ -2,6 +2,7 @@ using Auth.Interfaces.Services;
 using Auth.Interfaces.Respositories;
 using Auth.Models.ValueObjects;
 using Auth.Models.Domains;
+using Auth.Clients;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,14 +14,17 @@ namespace Auth.Services;
 public class AuthenticationService : IAuthenticationService
 {
   private readonly IAuthenticationRepository _authenticationRepository;
+  private readonly UserDetailsClient _userDetailsClient;
   private readonly IConfiguration _configuration;
 
   public AuthenticationService(
     IAuthenticationRepository authenticationRepository,
-    IConfiguration configuration)
+    IConfiguration configuration,
+    UserDetailsClient userDetailsClient)
   {
     _authenticationRepository = authenticationRepository;
     _configuration = configuration;
+    _userDetailsClient = userDetailsClient;
   }
 
   public async Task Register(UserRegistration registration)
@@ -40,7 +44,12 @@ public class AuthenticationService : IAuthenticationService
 
     await _authenticationRepository.CreateUserAccount(newUserAccount);
 
-    // TODO: emit event with details to create user details
+    var createdUser = await _authenticationRepository.GetAccountByEmail(newUserAccount.Email);
+
+    // A more robust solution is to emit an event with details 
+    // This allows other services to subscribe and react accordingly to a user account being registered
+    // For the time being, we'll settle for an HTTP request
+    await _userDetailsClient.RegisterUser(createdUser.Id, createdUser.Email, registration.FirstName, registration.LastName);
   }
 
   public async Task<string?> Login(UserLogin login)

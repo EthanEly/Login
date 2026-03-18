@@ -4,6 +4,10 @@ using Auth.Models.Domains;
 using Auth.Services;
 using Moq;
 using Microsoft.Extensions.Configuration;
+using Auth.Clients;
+using System.Net;
+using System.Net.Http;
+using Moq.Protected;
 
 namespace Auth.Tests.Services;
 
@@ -26,7 +30,18 @@ public class AuthenticationServiceTests
     };
     _configurationMock.Setup(c => c[It.IsAny<string>()]).Returns((string key) => jwtSettings.ContainsKey(key) ? jwtSettings[key] : null);
 
-    _authenticationService = new AuthenticationService(_authenticationRepositoryMock.Object, _configurationMock.Object);
+    var handlerMock = new Mock<HttpMessageHandler>();
+    handlerMock.Protected()
+        .Setup<Task<HttpResponseMessage>>(
+            "SendAsync",
+            ItExpr.IsAny<HttpRequestMessage>(),
+            ItExpr.IsAny<CancellationToken>())
+        .ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.OK });
+
+    var httpClient = new HttpClient(handlerMock.Object) { BaseAddress = new Uri("http://localhost") };
+    var userDetailsClient = new UserDetailsClient(httpClient);
+
+    _authenticationService = new AuthenticationService(_authenticationRepositoryMock.Object, _configurationMock.Object, userDetailsClient);
   }
 
   [Fact]
@@ -41,8 +56,16 @@ public class AuthenticationServiceTests
       Password = "password123"
     };
 
-    _authenticationRepositoryMock.Setup(repo => repo.GetAccountByEmail(registration.Email))
-        .ReturnsAsync((UserAccount?)null);
+    var createdUser = new UserAccount
+    {
+      Id = 456,
+      Email = registration.Email,
+      PasswordHash = "GENERATED_HASH",
+    };
+
+    _authenticationRepositoryMock.SetupSequence(repo => repo.GetAccountByEmail(registration.Email))
+        .ReturnsAsync((UserAccount?)null)
+        .ReturnsAsync(createdUser);
 
     // Act
     await _authenticationService.Register(registration);
