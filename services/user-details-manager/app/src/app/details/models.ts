@@ -3,7 +3,6 @@ import { isNotNull, isNotUndefined, isObject, isStringAndDefined } from "../../c
 export interface UserDetails {
   firstName: string;
   lastName: string;
-  email: string;
 }
 
 export const isUserDetails = (value: unknown): value is UserDetails => {
@@ -19,9 +18,6 @@ export const isUserDetails = (value: unknown): value is UserDetails => {
     isStringAndDefined(obj["firstName"]) &&
     isNotUndefined(obj["lastName"]) &&
     isNotNull(obj["lastName"]) &&
-    isStringAndDefined(obj["lastName"]) &&
-    isNotUndefined(obj["email"]) &&
-    isNotNull(obj["email"]) &&
-    isStringAndDefined(obj["email"])
+    isStringAndDefined(obj["lastName"])
   );
 };

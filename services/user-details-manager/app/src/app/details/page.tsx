@@ -1,24 +1,25 @@
 "use client";
 import { useEffect, useState } from "react";
 import { isUserDetails, UserDetails } from "./models";
-import { useAuth } from "../../apiClients/AuthContext";
+import { useAuth } from "../../apiClients/authContext";
 import { useRouter } from "next/navigation";
+import { authorisedFetch } from "../../apiClients/authorisedFetch";
 
 export default function DetailsPage() {
   const router = useRouter();
-  const { userEmail } = useAuth();
+  const { user } = useAuth();
   const [userDetails, setUserDetails] = useState<UserDetails>();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!userEmail) {
+    if (!user) {
       router.push("/login");
       return;
     }
 
     const fetchUserDetails = async () => {
       try {
-        const details = await getUserDetails(userEmail);
+        const details = await getUserDetails(user.id);
 
         setUserDetails(details);
       } catch (error) {
@@ -29,7 +30,7 @@ export default function DetailsPage() {
     };
 
     fetchUserDetails();
-  }, [userEmail]);
+  }, [user]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -82,7 +83,7 @@ export default function DetailsPage() {
                     Email
                   </th>
                   <td className="py-3 text-black dark:text-zinc-50">
-                    {showIfAvaliable(userDetails?.email)}
+                    {showIfAvaliable(user?.email)}
                   </td>
                 </tr>
               </tbody>
@@ -96,12 +97,12 @@ export default function DetailsPage() {
 
 export async function getUserDetails(userEmail: string): Promise<UserDetails> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_USER_API_URL}/details/${userEmail}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await authorisedFetch(
+      `${process.env.NEXT_PUBLIC_USER_API_URL}/details/${userEmail}`,
+      {
+        method: "GET",
       },
-    });
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);

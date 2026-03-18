@@ -4,7 +4,7 @@ import TextInput from "../../components/textInput";
 import { UserLoginFormData, UserLoginInformation } from "./models";
 import { ValidationError } from "../../common/models";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../apiClients/AuthContext";
+import { useAuth } from "../../apiClients/authContext";
 
 enum TextInputField {
   Email = "email-address",

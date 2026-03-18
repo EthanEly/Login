@@ -1,15 +1,20 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import DetailsPage, { getUserDetails } from "../../src/app/details/page";
-import { UserDetails } from "@/src/app/details/models";
+import { UserDetails } from "../../src/app/details/models";
+import * as authorisedFetchMock from "../../src/apiClients/authorisedFetch";
 
-jest.mock("../../src/apiClients/AuthContext", () => {
+jest.mock("../../src/apiClients/authContext", () => {
   return {
     useAuth: () => ({
-      userEmail: "TEST_EMAIL@EXAMPLE.COM",
+      user: {
+        id: "123",
+        email: "TEST_EMAIL@EXAMPLE.COM",
+      },
     }),
   };
 });
+
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
     push: jest.fn(),
@@ -21,15 +26,15 @@ describe("Details Page", () => {
   const userData: UserDetails = {
     firstName: "TEST_FIRST_NAME",
     lastName: "TEST_LAST_NAME",
-    email: "TEST_EMAIL@EXAMPLE.COM",
   };
+  const authorisedFetchSpy: jest.SpyInstance = jest.spyOn(authorisedFetchMock, "authorisedFetch");
 
   beforeEach(() => {
     process.env = {
       ...originalEnv,
       NEXT_PUBLIC_USER_API_URL: "http://myTestWebsite:8080",
     };
-    (global as any).fetch = jest.fn().mockResolvedValue({
+    authorisedFetchSpy.mockResolvedValue({
       ok: true,
       json: async () => userData,
     });
@@ -54,27 +59,24 @@ describe("Details Page", () => {
     const userEmail = "TEST_EMAIL@EXAMPLE.COM";
 
     it("should get user data using provided email", async () => {
-      (global as any).fetch = jest.fn().mockResolvedValueOnce({
+      authorisedFetchSpy.mockResolvedValueOnce({
         ok: true,
         json: async () => userData,
       });
 
       const userDetails = await getUserDetails(userEmail);
 
-      expect((global as any).fetch).toHaveBeenCalledWith(
+      expect(authorisedFetchSpy).toHaveBeenCalledWith(
         `http://myTestWebsite:8080/details/${userEmail}`,
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
         },
       );
       expect(userDetails).toEqual(userData);
     });
 
     it("throws an error when response is not ok", async () => {
-      (global as any).fetch = jest.fn().mockResolvedValueOnce({
+      authorisedFetchSpy.mockResolvedValueOnce({
         ok: false,
         status: 500,
       });
@@ -83,7 +85,7 @@ describe("Details Page", () => {
     });
 
     it("throws an error when fetch fails", async () => {
-      (global as any).fetch = jest.fn().mockImplementationOnce(() => {
+      authorisedFetchSpy.mockImplementationOnce(() => {
         throw new Error("Network error");
       });
 

@@ -4,7 +4,7 @@ import Login, { loginUser, validateFormData } from "../../src/app/login/page";
 import * as TextInputMock from "../../src/components/textInput";
 import { UserLoginFormData, UserLoginInformation } from "../../src/app/login/models";
 
-jest.mock("../../src/apiClients/AuthContext", () => {
+jest.mock("../../src/apiClients/authContext", () => {
   return {
     useAuth: () => ({
       login: jest.fn(),
