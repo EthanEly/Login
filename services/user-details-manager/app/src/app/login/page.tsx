@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import TextInput from "../../components/textInput";
+import BackButton from "../../components/backButton";
+import ErrorBanner from "../../components/errorBanner";
 import { UserLoginFormData, UserLoginInformation } from "./models";
 import { ValidationError } from "../../common/models";
 import { useRouter } from "next/navigation";
@@ -17,8 +19,10 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<ValidationError[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async () => {
+    setError(null);
     const validationErrors = validateFormData({
       email,
       password,
@@ -26,11 +30,17 @@ export default function Login() {
     setErrors(validationErrors);
 
     if (validationErrors.length === 0) {
-      const tokenGranted = await loginUser({ email, password });
+      try {
+        const tokenGranted = await loginUser({ email, password });
 
-      if (tokenGranted) {
-        login(tokenGranted.token);
-        router.push("/details");
+        if (tokenGranted) {
+          login(tokenGranted.token);
+          router.push("/details");
+        } else {
+          setErrors([{ field: TextInputField.Email, message: "Invalid credentials" }]);
+        }
+      } catch {
+        setError("Login failed, please try again later.");
       }
     }
   };
@@ -39,6 +49,8 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
         <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
+          <BackButton />
+          {error && <ErrorBanner message={error} />}
           <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
             Welcome back!
           </h1>

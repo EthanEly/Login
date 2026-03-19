@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { UserFormData, UserRegistrationInformation } from "./models";
 import TextInput from "../../components/textInput";
+import BackButton from "../../components/backButton";
+import ErrorBanner from "../../components/errorBanner";
 import { ValidationError } from "../../common/models";
 import { useRouter } from "next/navigation";
 
@@ -22,8 +24,10 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [errors, setErrors] = useState<ValidationError[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async () => {
+    setError(null);
     const validationErrors = validateFormData({
       firstName,
       lastName,
@@ -34,10 +38,14 @@ export default function Register() {
     setErrors(validationErrors);
 
     if (validationErrors.length === 0) {
-      const successfulRegistration = await registerUser({ firstName, lastName, email, password });
+      try {
+        const successfulRegistration = await registerUser({ firstName, lastName, email, password });
 
-      if (successfulRegistration) {
-        router.push("/login");
+        if (successfulRegistration) {
+          router.push("/login");
+        }
+      } catch {
+        setError("Registration failed, please try again later.");
       }
     }
   };
@@ -46,6 +54,8 @@ export default function Register() {
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
         <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
+          <BackButton />
+          {error && <ErrorBanner message={error} />}
           <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
             Hello!
           </h1>
