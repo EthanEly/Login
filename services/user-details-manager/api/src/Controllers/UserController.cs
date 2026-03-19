@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using User.Interfaces.Services;
 using User.Mappers;
@@ -33,6 +34,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("/details/{id}")]
+    [Authorize]
     public async Task<IActionResult> GetDetails(int id)
     {
         var user = await _userService.GetUserById(id);
