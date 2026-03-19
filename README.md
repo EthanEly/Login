@@ -1,12 +1,14 @@
-## Login
+# Login
 
 Welcome to the Login repository.
 
 Here user's can either login, or if they don't have an account, they can register their details.
 
-This consists of the User Details Manager service.
+This consists of the User Details Manager service and the Authentication service.
 
 The App for Login can be accessed through the User Details Manager App.
+
+<strong>NOTE: You will need a .env file to get things running.</strong>
 
 ## Running the App
 
@@ -25,7 +27,7 @@ Dev mode includes hot reloading, which is advantageous when developing, but this
 If this is your desired use case, run:
 
 ```bash
-npm run dev
+npm run dev:app
 ```
 
 If you're not interested in making changes and seeing the app update on the fly, built mode is the one you want.
@@ -33,6 +35,21 @@ If you're not interested in making changes and seeing the app update on the fly,
 ### Built mode
 
 If just running the app is what you're after, no hot reloading needed, run:
+
+```bash
+npm run build:app
+npm run start:app
+```
+
+## Running the API
+
+To run the API, you can simply do a `npm run start:api`
+
+This will build both micro-services, migrate their DBs and start them up.
+
+# TL;DR
+
+To simply get everything up at once:
 
 ```bash
 npm run build

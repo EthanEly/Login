@@ -3,11 +3,19 @@
   "version": "1.0.0",
   "description": "Welcome to the Login repository.",
   "scripts": {
-    "dev": "npm run dev --prefix user-details-manager/app",
-    "build": "npm run build --prefix user-details-manager/app",
-    "start": "npm run start --prefix user-details-manager/app",
-    "test": "npm run test --prefix user-details-manager/app",
-    "install:app": "npm install --prefix user-details-manager/app"
+    "dev:app": "npm run dev --prefix services/user-details-manager/app",
+    "build:app": "npm run build --prefix services/user-details-manager/app",
+    "build:api": "npm run build:auth-service && npm run build:user-service",
+    "build:auth-service": "dotnet build services/authentication-service/api/AuthenticationServiceApi.csproj",
+    "build:user-service": "dotnet build services/user-details-manager/api/UserDetailsManagerApi.csproj",
+    "test:app": "npm run test --prefix services/user-details-manager/app",
+    "test:auth-service": "dotnet test services/authentication-service/api/AuthenticationServiceApi.csproj",
+    "test:user-service": "dotnet test services/user-details-manager/api/UserDetailsManagerApi.csproj",
+    "install:app": "npm install --prefix services/user-details-manager/app",
+    "start:app": "npm run start --prefix services/user-details-manager/app",
+    "start:api": "docker-compose up -d",
+    "build": "npm run build:api && npm run build:app",
+    "start": "npm run start:api && npm run start:app"
   },
   "author": "Ethan Ely",
   "license": "MIT"
